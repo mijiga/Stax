@@ -1,7 +1,6 @@
 package com.hover.stax.bounty;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,19 +13,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.hover.stax.R;
 import com.hover.stax.actions.Action;
+import com.hover.stax.navigation.NavigationInterface;
 import com.hover.stax.utils.UIHelper;
 
-public class BountyListFragment extends Fragment implements BountyListAdapter.SelectListener {
+public class BountyListFragment extends Fragment implements NavigationInterface, BountyListAdapter.SelectListener {
 	private static final String TAG = "BountyListFragment";
 	private BountyViewModel bountyViewModel;
 	private View view;
-	private RecyclerView bountyRecyclerView;
+	private RecyclerView sectionedBountyRecyclerView;
 	private BountyRunInterface bountyRunInterface;
 
 	@Nullable
 	@Override
 	public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-		view = inflater.inflate(R.layout.fragment_bounty_list_layout, container, false);
+		view = inflater.inflate(R.layout.fragment_bounty_main_list_layout, container, false);
 		bountyViewModel = new ViewModelProvider(this).get(BountyViewModel.class);
 		bountyRunInterface = (BountyRunInterface) getActivity();
 		return view;
@@ -40,22 +40,22 @@ public class BountyListFragment extends Fragment implements BountyListAdapter.Se
 	}
 
 	private void initRecyclerView() {
-		bountyRecyclerView = view.findViewById(R.id.bountyList_recyclerView_id);
-		bountyRecyclerView.setLayoutManager(UIHelper.setMainLinearManagers(getContext()));
+		sectionedBountyRecyclerView = view.findViewById(R.id.bountyList_main);
+		sectionedBountyRecyclerView.setLayoutManager(UIHelper.setMainLinearManagers(getContext()));
 	}
 
 	private void startObservers() {
-		bountyViewModel.getBountyActionsLiveData().observe(getViewLifecycleOwner(), actions -> {
-			if (actions != null && actions.size() > 0) {
-				BountyListAdapter bountyListAdapter = new BountyListAdapter(actions, this, getContext());
-				bountyRecyclerView.setAdapter(bountyListAdapter);
+		bountyViewModel.getBountyActionsLiveData().observe(getViewLifecycleOwner(), sections -> {
+			if (sections != null && sections.size() > 0) {
+				SectionedBountyListAdapter sectionedBountyListAdapter = new SectionedBountyListAdapter(sections, this, getContext());
+				sectionedBountyRecyclerView.setAdapter(sectionedBountyListAdapter);
 			}
 		});
 	}
 
 	@Override
 	public void viewTransactionDetail(String uuid) {
-
+	navigateToTransactionDetailsFragment(uuid, this);
 	}
 
 	@Override

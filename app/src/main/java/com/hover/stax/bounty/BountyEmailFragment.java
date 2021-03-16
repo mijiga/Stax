@@ -50,7 +50,7 @@ public class BountyEmailFragment extends Fragment implements NavigationInterface
 			if(result.equals(Constants.SUCCESS)) {
 				promptEmailOrNavigateBountyList();
 			}
-			else UIHelper.flashMessage(getContext(), result);
+			else UIHelper.flashMessage(requireContext(), result);
 		});
 	}
 	private void initEmailInput() {
@@ -72,7 +72,6 @@ public class BountyEmailFragment extends Fragment implements NavigationInterface
 	private boolean isContinueButton(View v) {
 		return v.getId() == R.id.continueEmailBountyButton;
 	}
-
 
 	private void promptEmailOrNavigateBountyList() {
 		if (Utils.getBoolean(Constants.BOUNTY_EMAIL, getContext())) navigateToBountyListFragment(this);
